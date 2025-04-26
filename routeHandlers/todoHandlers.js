@@ -8,7 +8,7 @@ const Todo = new mongoose.model('todo', todoSchema);
 
 // get todos
 router.get('/', async (req, res) => {
-    // res.send("lala")
+    res.send("lala")
 })
 // get todos by id
 router.get('/:id', async (req, res) => {
@@ -17,19 +17,19 @@ router.get('/:id', async (req, res) => {
 // post todos
 router.post('/', async (req, res) => {
     const newTodo = new Todo(req.body)
-    newTodo.save((err) => {
-        if(err){
-            res.status(500).json({
-                status: "failed",
-                message: err.message
-            })
-        }else{
-            res.status(201).json({
-                status: 'success',
-                message: "data insert done."
-            })
-        }
-    })
+    try{
+        await newTodo.save()
+        res.status(201).json({
+            status: 'success',
+            message: "data insert done."
+        })
+    }catch(err){
+        res.status(500).json({
+            status: "failed",
+            message: err.message
+        })
+    }
+    
 })
 // post todos many
 router.post('/all', async (req, res) => {

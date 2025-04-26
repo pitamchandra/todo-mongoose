@@ -1,0 +1,10 @@
+### alla
+
+POST http://localhost:3000/todo/
+Content-Type: application/json
+
+{
+    
+    "description": "this is description",
+    "status": "inactive"
+}
