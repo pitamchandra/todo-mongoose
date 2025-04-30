@@ -2,6 +2,7 @@ const express = require('express')
 const cors = require('cors')
 const mongoose = require('mongoose')
 const todoHandler = require('./routeHandlers/todoHandlers')
+const userHandler = require('./routeHandlers/userHandler')
 
 
 const app = express()
@@ -9,7 +10,10 @@ const port = process.env.port || 3000
 
 // middleware
 app.use(cors())
+require('dotenv').config()
 app.use(express.json())
+
+
 
 mongoose.connect('mongodb://localhost/todos')
 .then(() => console.log("database is connected"))
@@ -18,6 +22,7 @@ mongoose.connect('mongodb://localhost/todos')
 // todos handler
 
 app.use('/todo', todoHandler)
+app.use('/user', userHandler)
 
 // app.get('/', async (req, res) => {
 //     res.send(`the server is running.........`);
