@@ -8,11 +8,43 @@ const Todo = new mongoose.model('todo', todoSchema);
 
 // get todos
 router.get('/', async (req, res) => {
-    res.send("lala")
+    try{
+        const todo = await Todo.find()
+        res.status(200).json({
+            status: 'success',
+            message: "data fetching successfully.",
+            data: todo
+        })
+    }catch(err){
+        res.status(500).json({
+            status: "failed",
+            message: err.message
+        })
+    }
 })
 // get todos by id
 router.get('/:id', async (req, res) => {
-
+    const { id } = req.params
+    try{
+        const todo = await Todo.findById(id)
+        if(todo){
+            res.status(200).json({
+                status: 'success',
+                message: "data getting successfully",
+                data: todo
+            })
+        }else{
+            res.status(404).json({
+                status: 'failed',
+                message: "data not found"
+            })
+        }
+    }catch(err){
+        res.status(500).json({
+            status: "failed",
+            message: err.message
+        })
+    }
 })
 // post todos
 router.post('/', async (req, res) => {
@@ -31,17 +63,65 @@ router.post('/', async (req, res) => {
     }
     
 })
-// post todos many
-router.post('/all', async (req, res) => {
-
+router.post('/many', async (req, res) => {
+    try{
+        const newTodos = await Todo.insertMany(req.body)
+        res.status(201).json({
+            status: 'success',
+            message: "Multiple todos inserted successfully.",
+            data: newTodos
+        })
+    }catch(err){
+        res.status(500).json({
+            status: "failed",
+            message: err.message
+        })
+    }
 })
 // put todos
 router.put('/:id', async (req, res) => {
-
+    try {
+        const updatedTodo = await Todo.findByIdAndUpdate(
+            req.params.id,
+            req.body,
+            {new: true}
+        )
+        
+        res.status(200).json({
+            status: 'success',
+            message: "data updated done.",
+            data: updatedTodo
+        })
+        
+    } catch (err) {
+        res.status(500).json({
+            status: "failed",
+            message: err.message
+        })
+    }
 })
 // delete todos
 router.delete('/:id', async (req, res) => {
-
+    const { id } = req.params
+    try{
+        const todo = await Todo.findByIdAndDelete(id)
+        if(todo){
+            res.status(200).json({
+                status: 'success',
+                message: "data deleted successfully"
+            })
+        }else{
+            res.status(404).json({
+                status: 'failed',
+                message: "data not found"
+            })
+        }
+    }catch(err){
+        res.status(500).json({
+            status: "failed",
+            message: err.message
+        })
+    }
 })
 
 module.exports = router
