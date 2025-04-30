@@ -22,6 +22,39 @@ router.get('/', async (req, res) => {
         })
     }
 })
+
+router.get('/node', async (req, res) => {
+    try{
+        const todo = await Todo.findNode()
+        res.status(200).json({
+            status: 'success',
+            message: "data fetching successfully.",
+            data: todo
+        })
+    }catch(err){
+        res.status(500).json({
+            status: "failed",
+            message: err.message
+        })
+    }
+})
+
+router.get('/language', async (req, res) => {
+    try{
+        const byLanguage = await Todo.find().byLanguage('language')
+        res.status(200).json({
+            status: "success",
+            message: "todos fetching successful",
+            data: byLanguage
+        })
+    }catch(err){
+        res.status(500).json({
+            status: "failed",
+            message: err.message
+        })
+    }
+})
+
 // get todos by id
 router.get('/:id', async (req, res) => {
     const { id } = req.params
@@ -63,6 +96,7 @@ router.post('/', async (req, res) => {
     }
     
 })
+
 router.post('/many', async (req, res) => {
     try{
         const newTodos = await Todo.insertMany(req.body)

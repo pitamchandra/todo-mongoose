@@ -16,4 +16,16 @@ const todoSchema = mongoose.Schema({
     }
 })
 
+todoSchema.statics = {
+    findNode : function (){
+        return this.find({title: /node/i})
+    }
+}
+
+todoSchema.query = {
+    byLanguage : function(language){
+        return this.find({title : new RegExp(language, 'i')})
+    }
+}
+
 module.exports = todoSchema;
