@@ -2,12 +2,11 @@ const express = require('express')
 const router = express.Router()
 const mongoose = require('mongoose')
 const todoSchema = require('../Schemas/todoSchema');
-
 const Todo = new mongoose.model('todo', todoSchema);
-
+const checkLogin = require('../middlewares/checkLogin')
 
 // get todos
-router.get('/', async (req, res) => {
+router.get('/', checkLogin, async (req, res) => {
     try{
         const todo = await Todo.find()
         res.status(200).json({
@@ -23,7 +22,7 @@ router.get('/', async (req, res) => {
     }
 })
 
-router.get('/node', async (req, res) => {
+router.get('/node', checkLogin, async (req, res) => {
     try{
         const todo = await Todo.findNode()
         res.status(200).json({
@@ -134,6 +133,7 @@ router.put('/:id', async (req, res) => {
         })
     }
 })
+
 // delete todos
 router.delete('/:id', async (req, res) => {
     const { id } = req.params

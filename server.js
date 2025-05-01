@@ -15,6 +15,8 @@ app.use(express.json())
 
 
 
+
+
 mongoose.connect('mongodb://localhost/todos')
 .then(() => console.log("database is connected"))
 .catch(err => console.log(err))
@@ -23,6 +25,16 @@ mongoose.connect('mongodb://localhost/todos')
 
 app.use('/todo', todoHandler)
 app.use('/user', userHandler)
+
+const errorHandler = (err, req, res, next) => {
+    console.log("lala",res.headersSent);
+    if(res.headersSent) {
+        return next(err)
+    }
+    res.status(500).json({ error : err})
+}
+
+app.use(errorHandler)
 
 // app.get('/', async (req, res) => {
 //     res.send(`the server is running.........`);
