@@ -27,7 +27,7 @@ app.use('/todo', todoHandler)
 app.use('/user', userHandler)
 
 const errorHandler = (err, req, res, next) => {
-    console.log("lala",res.headersSent);
+    // console.log("lala",res.headersSent);
     if(res.headersSent) {
         return next(err)
     }

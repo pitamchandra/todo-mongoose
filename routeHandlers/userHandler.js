@@ -56,12 +56,26 @@ router.post('/login', async (req, res) => {
                 message: "Authentication Failed"
             })
         }
-        
-        
     } catch {
         res.status(401).json({
             status: "failed",
             message: "Authentication Failed"
+        })
+    }
+})
+
+router.get('/all', async (req, res) => {
+    try {
+        const allUsers = await User.find({}).populate('todos')
+        res.status(200).json({
+            status: "success",
+            message: "user fetching successfully",
+            data: allUsers
+        })
+    } catch (err) {
+        res.status(500).json({
+            status: "failed",
+            message: err.message
         })
     }
 })

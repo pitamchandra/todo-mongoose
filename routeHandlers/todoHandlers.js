@@ -2,25 +2,35 @@ const express = require('express')
 const router = express.Router()
 const mongoose = require('mongoose')
 const todoSchema = require('../Schemas/todoSchema');
+const userSchema = require('../Schemas/userSchema');
 const Todo = new mongoose.model('todo', todoSchema);
-const checkLogin = require('../middlewares/checkLogin')
+const User = new mongoose.model('user', userSchema);
+const checkLogin = require('../middlewares/checkLogin');
+const { populate } = require('dotenv');
 
 // get todos
 router.get('/', checkLogin, async (req, res) => {
-    try{
-        const todo = await Todo.find()
-        res.status(200).json({
-            status: 'success',
-            message: "data fetching successfully.",
-            data: todo
-        })
-    }catch(err){
-        res.status(500).json({
-            status: "failed",
-            message: err.message
-        })
+    try {
+      const todo = await Todo.find({})
+    //   console.log(todo);
+        .populate("user", "name username email -_id") // 
+        // .select({ _id: 0, date: 0, __v: 0 })
+        // .limit(10);
+  
+      res.status(200).json({
+        status: 'success',
+        message: "Data fetched successfully.",
+        data: todo
+      });
+    } catch (err) {
+      res.status(500).json({
+        status: "failed",
+        message: err.message
+      });
     }
-})
+});
+
+
 
 router.get('/node', checkLogin, async (req, res) => {
     try{
@@ -79,13 +89,26 @@ router.get('/:id', async (req, res) => {
     }
 })
 // post todos
-router.post('/', async (req, res) => {
-    const newTodo = new Todo(req.body)
+router.post('/', checkLogin, async (req, res) => {
+    const newTodo = new Todo(
+        {
+        ...req.body,
+        user: req.userId
+        }
+    )
     try{
-        await newTodo.save()
+        const todo = await newTodo.save()
+        await User.updateOne({
+            _id: req.userId
+        }, {
+            $push: {
+                todos: todo._id
+            }
+        })
         res.status(201).json({
             status: 'success',
-            message: "data insert done."
+            message: "data insert done.",
+            data: newTodo
         })
     }catch(err){
         res.status(500).json({

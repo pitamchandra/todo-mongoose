@@ -21,7 +21,13 @@ const userSchema = new mongoose.Schema(
         },
         phone: {
             type: Number
-        }
+        },
+        todos: [
+            {
+                type: mongoose.Types.ObjectId,
+                ref: "todo"
+            }
+        ]
     }
 )
 
